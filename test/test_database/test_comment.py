@@ -24,11 +24,10 @@ class TestComment(TestCase):
         user = User.create('xua@wustl', 'password')
         section = Section.create('sports')
 
-        time = datetime.now()
-        post = Post.create("today's sports", time, "hey, let's discuss today's sports!")
+        post = Post.create("today's sports", datetime.now(), "hey, let's discuss today's sports!")
         post_id = post.post_id
-        first = Comment.create("it sounds good!")
-        second = Comment.create("I don't like sports")
+        first = Comment.create(datetime.now(), "it sounds good!")
+        second = Comment.create(datetime.now(), "I don't like sports")
         post.comments.append(first)
         post.comments.append(second)
         user.comments.append(first)

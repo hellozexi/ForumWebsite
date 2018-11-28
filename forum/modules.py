@@ -58,11 +58,12 @@ class Comment(db.Model):
     comment_id = db.Column(db.String(32), primary_key=True)
     post_id = db.Column(db.String(32), db.ForeignKey('post.post_id'), nullable=False)
     author_email = db.Column(db.String(32), db.ForeignKey('user.email'), nullable=False)
+    comment_time = db.Column(db.DateTime)
     context = db.Column(db.Text, nullable=False)
 
     @staticmethod
-    def create(context: str):
-        return Comment(comment_id=new_uuid(), context=context)
+    def create(time: datetime, context: str, ):
+        return Comment(comment_id=new_uuid(), comment_time=time, context=context)
 
     def __repr__(self):
         return f'comment id:\t{self.comment_id}'
