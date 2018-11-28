@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 flask-testing = "*"
+pytest = "*"
 
 [packages]
 flask = "*"
