@@ -9,6 +9,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(80))
     posts = db.relationship('Post', lazy=True, backref='poster', cascade='all,delete')
+    comments = db.relationship('Comment', lazy=True, backref='comment_by', cascade='all,delete')
 
     @staticmethod
     def create(email: str, password: str):
@@ -39,12 +40,29 @@ class Post(db.Model):
     post_id = db.Column(db.String(32), primary_key=True)
     post_name = db.Column(db.String(100))
     post_time = db.Column(db.DateTime)
-    poster_id = db.Column(db.String(32), db.ForeignKey('user.user_id'), nullable=False)
+    poster_email = db.Column(db.String(100), db.ForeignKey('user.email'), nullable=False)
     section_name = db.Column(db.String(100), db.ForeignKey('section.section_name'), nullable=False)
+    context = db.Column(db.Text, nullable=False)
+    comments = db.relationship('Comment', lazy=True, backref='post', cascade='all,delete')
 
     @staticmethod
-    def create(name: str, time: datetime):
-        return Post(post_id=new_uuid(), post_name=name, post_time=time)
+    def create(name: str, time: datetime, context: str):
+        return Post(post_id=new_uuid(), post_name=name, post_time=time, context=context)
 
     def __repr__(self):
         return f'{self.post_name}:{self.post_time}'
+
+
+class Comment(db.Model):
+
+    comment_id = db.Column(db.String(32), primary_key=True)
+    post_id = db.Column(db.String(32), db.ForeignKey('post.post_id'), nullable=False)
+    author_email = db.Column(db.String(32), db.ForeignKey('user.email'), nullable=False)
+    context = db.Column(db.Text, nullable=False)
+
+    @staticmethod
+    def create(context: str):
+        return Comment(comment_id=new_uuid(), context=context)
+
+    def __repr__(self):
+        return f'comment id:\t{self.comment_id}'
