@@ -13,7 +13,7 @@ config = {
 
 
 def create_app(test_config=None):
-    _app = Flask(__name__)
+    _app = Flask(__name__, template_folder="templates", static_folder="static", static_url_path="/forum/static")
 
     _app.config.from_mapping(config)
     if test_config is not None:

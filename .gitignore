@@ -2,3 +2,7 @@
 .idea/*
 *.pyc
 *.db
+.vscode/
+flask/
+forum/static/build/
+venv/
