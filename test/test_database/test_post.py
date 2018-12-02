@@ -38,3 +38,27 @@ class TestPost(TestCase):
         self.assertEqual(post.post_name, "today's sports")
         self.assertEqual(post.poster_email, 'xua@wustl')
         self.assertEqual(post.section_name, 'sports')
+
+    def test_create_post(self):
+        user = User.create('xua@wustl', 'password')
+        section = Section.create('sports')
+        db.session.add(user)
+        db.session.add(section)
+        db.session.commit()
+
+        time = datetime.now()
+        post = Post.create("today's sports", time, "hey, let's discuss today's sports!")
+        post_id = post.post_id
+
+        with db.session.no_autoflush:
+            user = User.query.filter_by(email='xua@wustl').first()
+            section = Section.query.filter_by(section_name='sports').first()
+            user.posts.append(post)
+            section.posts.append(post)
+            db.session.commit()
+
+        post = Post.query.filter_by(post_id=post_id).first()
+        self.assertEqual(post.post_time, time)
+        self.assertEqual(post.post_name, "today's sports")
+        self.assertEqual(post.poster_email, 'xua@wustl')
+        self.assertEqual(post.section_name, 'sports')

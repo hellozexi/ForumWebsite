@@ -23,16 +23,15 @@ class User(db.Model):
 
 
 class Section(db.Model):
-    section_id = db.Column(db.String(32), primary_key=True)
-    section_name = db.Column(db.String(100))
+    section_name = db.Column(db.String(100), primary_key=True)
     posts = db.relationship('Post', lazy=True, backref='section', cascade='all,delete')
 
     @staticmethod
     def create(name: str):
-        return Section(section_id=new_uuid(), section_name=name)
+        return Section(section_name=name)
 
     def __repr__(self):
-        return f'{self.section_name}:{self.section_id}'
+        return f'{self.section_name}'
 
 
 class Post(db.Model):
