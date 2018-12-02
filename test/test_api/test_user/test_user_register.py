@@ -60,6 +60,6 @@ class TestUserRegister(TestCase):
                 'email': 'jason@wustl.edu',
                 'password': 'strong_password',
             })
-            self.assertEqual(response.status_code, 403)
+            self.assertEqual(response.status_code, 400)
             self.assertEqual(response.json, {'message': 'user already exist'})
             self.assertEqual(len(User.query.all()), 1)
