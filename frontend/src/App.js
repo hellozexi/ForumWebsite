@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+
 import Blog from './containers/Blog/Blog';
+
 class App extends Component {
-  render() {
+  render () {
     return (
-      <div className="App">
-        <Blog />
-      </div>
+      // <BrowserRouter basename="/my-app">
+      <BrowserRouter>
+        <div className="App">
+          <Blog />
+        </div>
+      </BrowserRouter>
     );
   }
 }
