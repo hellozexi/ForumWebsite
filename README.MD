@@ -18,3 +18,9 @@ And configure the interpreter as pipenv in pycharm or run the server by using
 ```bash
 pipenv run python main.py
 ```
+To render the front-end pages
+```bash
+cd /frontend
+npm install
+npm run build
+```

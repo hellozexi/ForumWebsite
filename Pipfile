@@ -11,9 +11,12 @@ pytest = "*"
 flask = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
-
 mysql-connector = "*"
 passlib = "*"
+flask-restful = "*"
+flask-httpauth = "*"
+itsdangerous = "*"
+python-dateutil = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
