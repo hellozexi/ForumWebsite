@@ -19,6 +19,11 @@ export const authFail = (error) => {
         error: error
     };
 };
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    };
+};
 
 export const auth = (email, password, isSignUp) => {
     let url = '';

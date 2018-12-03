@@ -4,6 +4,7 @@ import Button from '../../components/UI/Button/Button';
 import { connect } from 'react-redux'
 import classes from './Auth.css';
 import * as actions from '../../store/actions/index';
+import {Redirect} from 'react-router-dom';
 class Auth extends Component {
     state = {
         controls: {
@@ -122,8 +123,13 @@ class Auth extends Component {
                     </p>
                 )
             }
+            let authRedirect = null;
+            if(this.props.isAuth) {
+                authRedirect = <Redirect to="/"/>
+            }
         return (
             <div className={classes.Auth}>
+                {authRedirect}
                 {errorMsg}
                 <form onSubmit={this.submitHandler}>
                     {form}
@@ -133,10 +139,11 @@ class Auth extends Component {
             </div>
         );
     }
-}
+}   
 const mapStateToProps = state => {
     return {
-        error: state.error
+        error: state.error,
+        isAuth: state.token !== null
     }
 }
 const mapDispatchToProps = dispatch => {

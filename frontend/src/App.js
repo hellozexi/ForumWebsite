@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 import Blog from './containers/Blog/Blog';
 
 class App extends Component {
@@ -9,11 +9,16 @@ class App extends Component {
       // <BrowserRouter basename="/my-app">
       <BrowserRouter>
         <div className="App">
-          <Blog />
+          <Blog isAuthenticated={this.props.isAuthenticated} />
         </div>
       </BrowserRouter>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+      isAuthenticated : state.token !== null
+  }
+}
 
-export default App;
+export default connect(mapStateToProps)(App);

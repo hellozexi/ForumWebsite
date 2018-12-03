@@ -4,19 +4,17 @@ import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
 
 import classes from './Blog.css';
 import Posts from './Posts/Posts';
+import Sections from './Sections/Sections'
 import asyncComponent from '../../hoc/asyncComponent';
 import Auth from '../../containers/Auth/Auth'
+import Logout from '../../containers/Auth/Logout/Logout'
 // import NewPost from './NewPost/NewPost';
-
+import { connect } from 'react-redux';
 const AsyncNewPost = asyncComponent(() => {
     return import('./NewPost/NewPost');
 });
 
 class Blog extends Component {
-    state = {
-        auth: true
-    }
-
     render () {
         return (
             <div className={classes.Blog}>
@@ -36,16 +34,22 @@ class Blog extends Component {
                                 hash: '#submit',
                                 search: '?quick-submit=true'
                             }}>New Post</NavLink></li>
-                            <li><NavLink to="/auth">Sign up/Sign in</NavLink></li>
+                            <li> 
+                                {
+                                    this.props.isAuthenticated ? <NavLink to="/logout">Log out</NavLink> : <NavLink to="/auth">Sign up/Sign in</NavLink>
+                                }
+                            </li>
                         </ul>
                     </nav>
                 </header>
                 {/* <Route path="/" exact render={() => <h1>Home</h1>} />
                 <Route path="/" render={() => <h1>Home 2</h1>} /> */}
                 <Switch>
-                    {this.state.auth ? <Route path="/new-post" component={AsyncNewPost} /> : null}
+                    <Route path="/new-post" component={AsyncNewPost} /> 
                     <Route path="/posts" component={Posts} />
                     <Route path="/auth" component={Auth} />
+                    <Route path="/logout" component={Logout} />
+                    <Route path="/" component={Sections} />
                     <Route render={() => <h1>Not found</h1>}/>
                     {/* <Redirect from="/" to="/posts" /> */}
                     {/* <Route path="/" component={Posts} /> */}
@@ -54,5 +58,4 @@ class Blog extends Component {
         );
     }
 }
-
 export default Blog;

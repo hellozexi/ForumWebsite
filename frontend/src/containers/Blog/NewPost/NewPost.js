@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
-
+import {connect} from 'react-redux';
 import classes from'./NewPost.css';
 
 class NewPost extends Component {
     state = {
         title: '',
         content: '',
-        author: 'Max',
+        section: 'default',
         submitted: false
     }
 
@@ -18,16 +18,28 @@ class NewPost extends Component {
     }
 
     postDataHandler = () => {
-        const data = {
-            title: this.state.title,
-            body: this.state.content,
-            author: this.state.author
-        };
-        axios.post( '/posts', data )
+        /*json={
+            'post_name': "today's sports",
+            'post_time': time,
+            'section_name': 'sport',
+            'context': "sport is great!",
+        }*/
+        console.log(this.props.token)
+        let config = {
+            headers: {
+                'Authorization': "Token " + this.props.token
+            }
+        }
+        axios.post( '/api/posts', {
+            'post_name': this.state.title,
+            'post_time': new Date(),
+            'section_name': this.state.section,
+            'context': this.state.content,
+        }, config)
             .then( response => {
                 console.log( response );
                 this.props.history.replace('/posts');
-                // this.setState( { submitted: true } );
+                this.setState( { submitted: true } );
             } );
     }
 
@@ -44,15 +56,20 @@ class NewPost extends Component {
                 <input type="text" value={this.state.title} onChange={( event ) => this.setState( { title: event.target.value } )} />
                 <label>Content</label>
                 <textarea rows="4" value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
-                <label>Author</label>
-                <select value={this.state.author} onChange={( event ) => this.setState( { author: event.target.value } )}>
-                    <option value="Max">Max</option>
-                    <option value="Manu">Manu</option>
+                <label>Section</label>
+                <select value={this.state.section} onChange={( event ) => this.setState( { section: event.target.value } )}>
+                    <option value="default">default</option>
+                    <option value="others">others</option>
                 </select>
                 <button onClick={this.postDataHandler}>Add Post</button>
             </div>
         );
     }
 }
-
-export default NewPost;
+const mapStateToProps = state => {
+    return {
+        token : state.token
+    }
+  }
+  
+export default connect(mapStateToProps)(NewPost);

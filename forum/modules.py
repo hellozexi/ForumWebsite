@@ -8,6 +8,7 @@ class User(db.Model):
     user_id = db.Column(db.String(32), primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(80))
+    admin = db.Column(db.Boolean)
     posts = db.relationship('Post', lazy=True, backref='poster', cascade='all,delete')
     comments = db.relationship('Comment', lazy=True, backref='comment_by', cascade='all,delete')
 
