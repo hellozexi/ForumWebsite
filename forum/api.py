@@ -71,6 +71,10 @@ class SectionsApi(Resource):
         self.parser = reqparse.RequestParser(bundle_errors=True)
         self.parser.add_argument('section_name', type=str, required=True, help='section name missing')
 
+    def get(self):
+        sections = Section.query.all()
+        return [section.section_name for section in sections], 200
+
     @auth.login_required
     def post(self):
         args = self.parser.parse_args()
