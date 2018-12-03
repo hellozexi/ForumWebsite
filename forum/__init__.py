@@ -14,11 +14,13 @@ def create_app(test_config=None):
 
     from forum.home import bp_home
     _app.register_blueprint(bp_home)
-    from forum.api import UsersApi, TokensApi, PostsApi, PostApi
+    from forum.api import UsersApi, TokensApi, PostsApi, PostApi, CommentsApi, CommentApi
     api.add_resource(UsersApi, '/users')
     api.add_resource(TokensApi, '/tokens')
     api.add_resource(PostApi, '/post/<string:post_id>')
     api.add_resource(PostsApi, '/posts')
+    api.add_resource(CommentApi, '/comment/<string:comment_id>')
+    api.add_resource(CommentsApi, '/comments')
 
     from forum.modules import User, Section, Post, Comment
     with _app.app_context():
