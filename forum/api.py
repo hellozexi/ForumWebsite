@@ -66,6 +66,39 @@ class TokensApi(Resource):
         return {'token': signer.sign(user.user_id).decode()}, 201
 
 
+class SectionsApi(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('section_name', type=str, required=True, help='section name missing')
+
+    def get(self):
+        sections = Section.query.all()
+        return [section.section_name for section in sections], 200
+
+    @auth.login_required
+    def post(self):
+        args = self.parser.parse_args()
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
+        section = Section.create(args['section_name'])
+        db.session.add(section)
+        db.session.commit()
+        return {'section_name': args['section_name']}, 201
+
+
+class SectionApi(Resource):
+    @auth.login_required
+    def delete(self, section_name):
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
+        section = Section.query.filter_by(section_name=section_name).first()
+        if section is None:
+            abort(404, 'section not exist')
+        db.session.delete(section)
+        db.session.commit()
+        return {'section_name': section_name}, 200
+
+
 class PostsApi(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser(bundle_errors=True)
@@ -137,9 +170,11 @@ class PostApi(Resource):
 
     @auth.login_required
     def put(self, post_id):
-        post = Post.query.with_parent(g.user).filter_by(post_id=post_id).first()
+        post = Post.query.filter_by(post_id=post_id).first()
         if post is None:
             abort(404, 'post not found')
+        if post.poster_email != g.user.email:
+            abort(403, "you don't have permission to modify")
         args = self.parser.parse_args()
         if args['post_name'] is None and args['context'] is None:
             abort(400, 'arguments missing')
@@ -182,9 +217,12 @@ class PostApi(Resource):
         :param post_id:
         :return:
         """
-        post = Post.query.with_parent(g.user).filter_by(post_id=post_id).first()
+        post = Post.query.filter_by(post_id=post_id).first()
         if post is None:
             abort(404, 'event not exist')
+        if post.poster_email != g.user.email and not g.user.admin:
+            # the poster and the admin could delete post
+            abort(403, "you don't have permission to delete")
         db.session.delete(post)
         db.session.commit()
         return {'post_id': post_id}, 200
@@ -259,9 +297,11 @@ class CommentApi(Resource):
 
     @auth.login_required
     def put(self, comment_id):
-        comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
+        comment = Comment.query.filter_by(comment_id=comment_id).first()
         if comment is None:
             abort(404, 'post not found')
+        if comment.author_email != g.user.email:
+            abort(403, "you don't have permission to modify")
         args = self.parser.parse_args()
         if args['context'] is None:
             abort(400, 'argument missing')
@@ -294,6 +334,9 @@ class CommentApi(Resource):
         comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
         if comment is None:
             abort(404, 'event not exist')
+        if comment.post.poster_email != g.user.email and comment.author_email != g.user.email and not g.user.admin:
+            # the poster, commenter and the admin could delete comment
+            abort(403, "you don't have permission to delete")
         db.session.delete(comment)
         db.session.commit()
         return {'comment_id': comment_id}, 200
