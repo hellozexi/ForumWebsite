@@ -166,9 +166,11 @@ class PostApi(Resource):
 
     @auth.login_required
     def put(self, post_id):
-        post = Post.query.with_parent(g.user).filter_by(post_id=post_id).first()
+        post = Post.query.filter_by(post_id=post_id).first()
         if post is None:
             abort(404, 'post not found')
+        if post.poster_email != g.user.email:
+            abort(403, "you don't have permission to modify")
         args = self.parser.parse_args()
         if args['post_name'] is None and args['context'] is None:
             abort(400, 'arguments missing')
@@ -211,9 +213,12 @@ class PostApi(Resource):
         :param post_id:
         :return:
         """
-        post = Post.query.with_parent(g.user).filter_by(post_id=post_id).first()
+        post = Post.query.filter_by(post_id=post_id).first()
         if post is None:
             abort(404, 'event not exist')
+        if post.poster_email != g.user.email and not g.user.admin:
+            # the poster and the admin could delete post
+            abort(403, "you don't have permission to delete")
         db.session.delete(post)
         db.session.commit()
         return {'post_id': post_id}, 200
@@ -288,9 +293,11 @@ class CommentApi(Resource):
 
     @auth.login_required
     def put(self, comment_id):
-        comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
+        comment = Comment.query.filter_by(comment_id=comment_id).first()
         if comment is None:
             abort(404, 'post not found')
+        if comment.author_email != g.user.email:
+            abort(403, "you don't have permission to modify")
         args = self.parser.parse_args()
         if args['context'] is None:
             abort(400, 'argument missing')
@@ -323,6 +330,9 @@ class CommentApi(Resource):
         comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
         if comment is None:
             abort(404, 'event not exist')
+        if comment.post.poster_email != g.user.email and comment.author_email != g.user.email and not g.user.admin:
+            # the poster, commenter and the admin could delete comment
+            abort(403, "you don't have permission to delete")
         db.session.delete(comment)
         db.session.commit()
         return {'comment_id': comment_id}, 200
