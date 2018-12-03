@@ -22,3 +22,12 @@ def rebuild_db():
     with app.app_context():
         db.drop_all()
         db.create_all()
+        insert()
+
+
+def insert():
+    from .modules import User, Section
+    db.session.add(User.create('admin', 'admin', admin=True))
+    db.session.add(Section.create('default'))
+    db.session.add(Section.create('others'))
+    db.session.commit()

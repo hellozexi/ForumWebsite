@@ -66,6 +66,35 @@ class TokensApi(Resource):
         return {'token': signer.sign(user.user_id).decode()}, 201
 
 
+class SectionsApi(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('section_name', type=str, required=True, help='section name missing')
+
+    @auth.login_required
+    def post(self):
+        args = self.parser.parse_args()
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
+        section = Section.create(args['section_name'])
+        db.session.add(section)
+        db.session.commit()
+        return {'section_name': args['section_name']}, 201
+
+
+class SectionApi(Resource):
+    @auth.login_required
+    def delete(self, section_name):
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
+        section = Section.query.filter_by(section_name=section_name).first()
+        if section is None:
+            abort(404, 'section not exist')
+        db.session.delete(section)
+        db.session.commit()
+        return {'section_name': section_name}, 200
+
+
 class PostsApi(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser(bundle_errors=True)

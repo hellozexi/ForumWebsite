@@ -8,12 +8,13 @@ class User(db.Model):
     user_id = db.Column(db.String(32), primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(80))
+    admin = db.Column(db.Boolean)
     posts = db.relationship('Post', lazy=True, backref='poster', cascade='all,delete')
     comments = db.relationship('Comment', lazy=True, backref='comment_by', cascade='all,delete')
 
     @staticmethod
-    def create(email: str, password: str):
-        return User(user_id=new_uuid(), email=email, password=sha256_crypt.hash(password))
+    def create(email: str, password: str, admin=False):
+        return User(user_id=new_uuid(), email=email, password=sha256_crypt.hash(password), admin=admin)
 
     def verify(self, password):
         return sha256_crypt.verify(password, self.password)
