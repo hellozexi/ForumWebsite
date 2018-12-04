@@ -13,8 +13,8 @@ class User(db.Model):
     comments = db.relationship('Comment', lazy=True, backref='comment_by', cascade='all,delete')
 
     @staticmethod
-    def create(email: str, password: str):
-        return User(user_id=new_uuid(), email=email, password=sha256_crypt.hash(password))
+    def create(email: str, password: str, admin=False):
+        return User(user_id=new_uuid(), email=email, password=sha256_crypt.hash(password), admin=admin)
 
     def verify(self, password):
         return sha256_crypt.verify(password, self.password)
