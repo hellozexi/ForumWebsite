@@ -1,5 +1,6 @@
 from flask_testing import TestCase
 from datetime import datetime
+from urllib.parse import urlencode
 from forum import create_app
 from forum.database import db
 from forum.modules import User, Post, Section
@@ -54,14 +55,14 @@ class TestGetPosts(TestCase):
 
     def test_get_by_user(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/posts?user_id={self.user_id}')
+            response = client.get(f'/api/posts?{urlencode({"user_email": "xua@wustl.edu"})}')
             self.assertEqual(len(response.json), 3)
             names = [post['post_name'] for post in response.json]
             self.assertListEqual(names, ["today's sports", "yesterday's sports", "tomorrow's sports"])
 
     def test_get_by_section(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/posts?section_name=sport')
+            response = client.get(f'/api/posts?{urlencode({"section_name": "sport"})}')
             self.assertEqual(len(response.json), 3)
             names = [post['post_name'] for post in response.json]
             self.assertListEqual(names, ["today's sports", "yesterday's sports", "tomorrow's sports"])
@@ -74,12 +75,12 @@ class TestGetPosts(TestCase):
 
     def test_get_with_other_argument(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/posts?other=else')
+            response = client.get(f'/api/posts?{urlencode({"other": "else"})}')
             self.assertStatus(response, 400)
             self.assertEqual(response.json, {'message': 'arguments missing'})
 
     def test_too_many_argumernts(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/posts?user_id={self.user_id}&section_name=sports')
+            response = client.get(f'/api/posts?{urlencode({"user_email": "xua@wustl.edu", "section_name": "sport"})}')
             self.assertStatus(response, 400)
             self.assertEqual(response.json, {'message': 'too many arguments'})

@@ -111,17 +111,17 @@ class PostsApi(Resource):
 
         self.id_parser = reqparse.RequestParser()
         self.id_parser.add_argument('section_name', default=None, type=str, help='section name')
-        self.id_parser.add_argument('user_id', default=None, type=str, help='user id')
+        self.id_parser.add_argument('user_email', default=None, type=str, help='user email')
         super(PostsApi, self).__init__()
 
     def get(self):
         args = self.id_parser.parse_args()
-        section_name, user_id = args['section_name'], args['user_id']
+        section_name, user_email = args['section_name'], args['user_email']
         if section_name is None:
-            if user_id is None:
+            if user_email is None:
                 abort(400, 'arguments missing')
             else:  # with user argument
-                user = User.query.filter_by(user_id=user_id).first()
+                user = User.query.filter_by(email=user_email).first()
                 if user is None:
                     abort(404, 'user not exist')
                 return [{
@@ -132,7 +132,7 @@ class PostsApi(Resource):
                     'section_name': post.section_name,
                 } for post in user.posts], 200
         else:  # with section argument
-            if user_id is None:
+            if user_email is None:
                 section = Section.query.filter_by(section_name=section_name).first()
                 if section is None:
                     abort(404, 'section not exist')
@@ -239,17 +239,17 @@ class CommentsApi(Resource):
 
         self.id_parser = reqparse.RequestParser()
         self.id_parser.add_argument('post_id', default=None, type=str, help='post id')
-        self.id_parser.add_argument('user_id', default=None, type=str, help='user id')
+        self.id_parser.add_argument('user_email', default=None, type=str, help='user email')
         super(CommentsApi, self).__init__()
 
     def get(self):
         args = self.id_parser.parse_args()
-        post_id, user_id = args['post_id'], args['user_id']
+        post_id, user_email = args['post_id'], args['user_email']
         if post_id is None:
-            if user_id is None:
+            if user_email is None:
                 abort(400, 'arguments missing')
             else:  # with user argument
-                user = User.query.filter_by(user_id=user_id).first()
+                user = User.query.filter_by(email=user_email).first()
                 if user is None:
                     abort(404, 'user not exist')
                 return [{
@@ -260,7 +260,7 @@ class CommentsApi(Resource):
                     'context': comments.context,
                 } for comments in user.comments], 200
         else:  # with post id argument
-            if user_id is None:
+            if user_email is None:
                 post = Post.query.filter_by(post_id=post_id).first()
                 if post is None:
                     abort(404, 'section not exist')
