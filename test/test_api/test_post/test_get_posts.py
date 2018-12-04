@@ -65,3 +65,21 @@ class TestGetPosts(TestCase):
             self.assertEqual(len(response.json), 3)
             names = [post['post_name'] for post in response.json]
             self.assertListEqual(names, ["today's sports", "yesterday's sports", "tomorrow's sports"])
+
+    def test_get_without_argument(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/posts')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_get_with_other_argument(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/posts?other=else')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_too_many_argumernts(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/posts?user_id={self.user_id}&section_name=sports')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'too many arguments'})

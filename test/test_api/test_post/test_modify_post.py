@@ -53,3 +53,53 @@ class TestModifyPost(TestCase):
             post = response.json
             self.assertEqual(post['post_name'], "tomorrow's sports")
             self.assertEqual(post['context'], "sport is worse!")
+
+    def test_modify_name(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/post/{self.post_id}', json={
+                'post_name': "tomorrow's sports",
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 200)
+            self.assertEqual(response.json['post_id'], self.post_id)
+
+            response = client.get(f'/api/post/{self.post_id}')
+            self.assertStatus(response, 200)
+            post = response.json
+            self.assertEqual(post['post_name'], "tomorrow's sports")
+
+    def test_modify_context(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/post/{self.post_id}', json={
+                'context': "sport is worse!",
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 200)
+            self.assertEqual(response.json['post_id'], self.post_id)
+
+            response = client.get(f'/api/post/{self.post_id}')
+            self.assertStatus(response, 200)
+            post = response.json
+            self.assertEqual(post['context'], "sport is worse!")
+
+    def test_modify_none(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/post/{self.post_id}', json={
+
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_modify_with_other_argument(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/post/{self.post_id}', json={
+                'else': 'something else'
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_modify_without_token(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/post/{self.post_id}', json={
+                'post_name': "tomorrow's sports",
+                'context': "sport is worse!",
+            })
+            self.assertStatus(response, 401)

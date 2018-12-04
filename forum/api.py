@@ -151,7 +151,7 @@ class PostsApi(Resource):
         args = self.parser.parse_args()
         section = Section.query.filter_by(section_name=args['section_name']).first()
         if section is None:
-            abort(404, 'section not exist')
+            abort(400, 'section not exist')
         if not check_datetime(args['post_time']):
             abort(400, 'post_time not valid')
         with db.session.no_autoflush:
