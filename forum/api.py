@@ -80,6 +80,8 @@ class SectionsApi(Resource):
         args = self.parser.parse_args()
         if not g.user.admin:
             abort(403, 'user is not admin!')
+        if Section.query.filter_by(section_name=args['section_name']).count() != 0:
+            abort(400, 'section already exist')
         section = Section.create(args['section_name'])
         db.session.add(section)
         db.session.commit()
