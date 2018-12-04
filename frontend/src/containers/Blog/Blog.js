@@ -11,6 +11,7 @@ import Logout from '../../containers/Auth/Logout/Logout'
 // import NewPost from './NewPost/NewPost';
 import { connect } from 'react-redux';
 import FullPost from './FullPost/FullPost';
+import Profile from './Profile/Profile';
 const AsyncNewPost = asyncComponent(() => {
     return import('./NewPost/NewPost');
 });
@@ -30,11 +31,15 @@ class Blog extends Component {
                                     color: '#fa923f',
                                     textDecoration: 'underline'
                                 }}>Home</NavLink></li>
-                            <li><NavLink to={{
-                                pathname: '/new-post',
-                                hash: '#submit',
-                                search: '?quick-submit=true'
-                            }}>New Post</NavLink></li>
+                            {
+                                this.props.isAuthenticated ? <NavLink to="/profile">My profile</NavLink> : null
+                            }
+                            <li>
+                            {
+                                this.props.isAuthenticated ? <NavLink to="/new-post">New Post</NavLink> : null
+                            }
+                                
+                                </li>
                             <li> 
                                 {
                                     this.props.isAuthenticated ? <NavLink to="/logout">Log out</NavLink> : <NavLink to="/auth">Sign up/Sign in</NavLink>
@@ -49,6 +54,7 @@ class Blog extends Component {
                     <Route path="/new-post" component={AsyncNewPost} /> 
                     <Route path="/auth" component={Auth} />
                     <Route path="/logout" component={Logout} />
+                    <Route path="/profile" component={Profile} />
                     <Route path="/posts/:id" exact component={FullPost} />
                     <Route path={'/:id'} exact component={Posts} />
                     <Route path="/" component={Sections} />

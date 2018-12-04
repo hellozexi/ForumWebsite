@@ -6,10 +6,11 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (token) => {
+export const authSuccess = (token, email) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        idToken: token
+        idToken: token,
+        email: email
     };
 };
 
@@ -44,7 +45,7 @@ export const auth = (email, password, isSignUp) => {
         })
             .then(response => {
                 console.log(response);
-                dispatch(authSuccess(response.data.token));
+                dispatch(authSuccess(response.data.token, email));
             })
             .catch(err => {
                 console.log(err.response.data.message);

@@ -5,7 +5,13 @@
     box-shadow: 0 2px 3px #ccc;
     text-align: center;
 }
-
+.Comments {
+    width: 100%;
+    margin: 20px auto;
+    border: 1px solid #521751;
+    box-shadow: 0 2px 3px #521751;
+    text-align: center;
+}
 .Edit {
 
 }
