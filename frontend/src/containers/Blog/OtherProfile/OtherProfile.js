@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import axios from '../../../axios';
 import { Route } from 'react-router-dom';
-import { connect} from 'react-redux';
 import Post from '../../../components/Post/Post';
 import Comment from '../../../components/Comment/Comment'
-import classes from './Profile.css';
+import classes from './OtherProfile.css';
 import FullPost from '../FullPost/FullPost';
 
-class Profile extends Component {
+class OtherProfile extends Component {
     state = {
         posts: [],
         comments: []
@@ -17,20 +16,19 @@ class Profile extends Component {
         this.loadData();
     }
     loadData () {
-        console.log(this.props.email);
         console.log(this.props)
-        if ( this.props.email ) {
+        if ( this.props.match.params.id ) {
             
             //response = client.get(f'/api/posts?{urlencode(   }')
-            axios.get( '/api/posts?' + encodeURI("user_email="+encodeURI(this.props.email)) )
+            axios.get( '/api/posts?' + encodeURI("user_email="+encodeURI(this.props.match.params.id)) )
             .then( response => {
                  console.log(response);
                  this.setState({posts : response.data})
             } );
         }
-        if ( this.props.email ) {
+        if ( this.props.match.params.id ) {
             //response = client.get(f'/api/comments?{urlencode({"user_email": "xua@wustl.edu"})}')
-            axios.get( '/api/comments?' + encodeURI("user_email="+encodeURI(this.props.email)))
+            axios.get( '/api/comments?' + encodeURI("user_email="+encodeURI(this.props.match.params.id)))
                 .then( response => {
                     console.log(response);
                     this.setState( { comments: response.data } );
@@ -75,7 +73,7 @@ class Profile extends Component {
         }
         return (
             <div>
-                <section className={classes.Profile}>
+                <section className={classes.OtherProfile}>
                     {posts}
                     <hr />
                     <p>Comments:</p>
@@ -88,10 +86,5 @@ class Profile extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        email : state.email
-    }
-  }
   
-export default connect(mapStateToProps)(Profile);
+export default OtherProfile;

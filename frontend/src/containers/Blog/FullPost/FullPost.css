@@ -6,11 +6,11 @@
     text-align: center;
 }
 .Comments {
-    width: 100%;
-    margin: 20px auto;
-    border: 1px solid #521751;
-    box-shadow: 0 2px 3px #521751;
-    text-align: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    width: 80%;
+    margin: auto;
 }
 .Edit {
 
@@ -41,4 +41,8 @@
 .Edit button.Delete:hover,
 .Edit button.Delete:active {
     color: darkred;
+}
+.Author {
+    margin: 16px 0;
+    color: #ccc;
 }

@@ -61,7 +61,10 @@ class FullPost extends Component {
                 } );
         }
     }
-
+    checkAuthorHandler = (email) => {
+        console.log('EMail:' + email);
+        this.props.history.push('/users/' + encodeURI(email));
+    }
     render () {
         let redirect = null;
         if (this.state.submitted) {
@@ -78,10 +81,9 @@ class FullPost extends Component {
                 <div className={classes.FullPost}>
                     <h1>{this.state.loadedPost.post_name}</h1>
                     <p>{this.state.loadedPost.context}</p>
-                    
-                    <div>
-                        <p>{this.state.loadedPost.post_time}</p>
-                        <p>{this.state.loadedPost.poster_email}</p>
+                    <p>{this.state.loadedPost.post_time}</p>
+                    <div className={classes.Edit}>
+                        <button className={classes.delete} onClick={()=>this.checkAuthorHandler(this.state.loadedPost.poster_email)}>{this.state.loadedPost.poster_email}</button>
                     </div>
                     <div className={classes.Edit}>
                         
@@ -93,18 +95,20 @@ class FullPost extends Component {
                         {
                             this.state.comments.map(comment => {
                                 return (
-                                <Comment 
-                                key={comment.comment_id}
-                                title={comment.context}
-                                author={comment.author_email}
-                                time={comment.comment_time}
-                                clicked={() => this.commentSelectedHandler( comment.comment_id )}/>  
+                                    <Comment 
+                                    key={comment.comment_id}
+                                    title={comment.context}
+                                    author={comment.author_email}
+                                    time={comment.comment_time}
+                                    clicked={() => this.commentSelectedHandler( comment.comment_id )}/>  
                                 )
                         })}
                     </div>
                 </div>
+
             );
         }
+
         return post;
     }
 }

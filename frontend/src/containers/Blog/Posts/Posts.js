@@ -29,7 +29,6 @@ class Posts extends Component {
         console.log("path:::" + '/' + this.props.match.params.id + '/' + id)
         this.props.history.push( '/posts/'  + id );
     }
-
     render () {
         let posts = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
         if ( !this.state.error ) {
@@ -40,7 +39,8 @@ class Posts extends Component {
                         key={post.post_id}
                         title={post.post_name}
                         author={post.poster_email}
-                        clicked={() => this.postSelectedHandler( post.post_id )} />
+                        clicked={() => this.postSelectedHandler( post.post_id )}
+                        clicked_author={() => this.authorSelectedHandler(post.poster_email)} />
                     // </Link>
                 );
             } );
