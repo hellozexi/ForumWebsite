@@ -9,31 +9,18 @@ class FullPost extends Component {
     }
 
     componentDidMount () {
-        console.log(this.props);
-        this.loadData();
-    }
-
-    componentDidUpdate() {
         this.loadData();
     }
 
     loadData () {
+        console.log(this.props)
         if ( this.props.match.params.id ) {
-            if ( !this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== +this.props.match.params.id) ) {
-                axios.get( '/posts/' + this.props.match.params.id )
-                    .then( response => {
-                        // console.log(response);
-                        this.setState( { loadedPost: response.data } );
-                    } );
-            }
+            axios.get( '/api/post/' + this.props.match.params.id )
+                .then( response => {
+                    console.log(response);
+                    this.setState( { loadedPost: response.data } );
+                } );
         }
-    }
-
-    deletePostHandler = () => {
-        axios.delete('/posts/' + this.props.match.params.id)
-            .then(response => {
-                console.log(response);
-            });
     }
 
     render () {
@@ -44,13 +31,16 @@ class FullPost extends Component {
         if ( this.state.loadedPost ) {
             post = (
                 <div className={classes.FullPost}>
-                    <h1>{this.state.loadedPost.title}</h1>
-                    <p>{this.state.loadedPost.body}</p>
+                    <h1>{this.state.loadedPost.post_name}</h1>
+                    <p>{this.state.loadedPost.context}</p>
                     <div className={classes.Edit}>
-                        <button onClick={this.deletePostHandler} className={classes.delete}>Delete</button>
+                        <button onClick={this.deletePostHandler} className={classes.delete}>Comment</button>
+                    </div>
+                    <div>
+                        <p>{this.state.loadedPost.post_time}</p>
+                        <p>{this.state.loadedPost.poster_email}</p>
                     </div>
                 </div>
-
             );
         }
         return post;

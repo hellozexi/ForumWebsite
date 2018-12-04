@@ -10,6 +10,7 @@ import Auth from '../../containers/Auth/Auth'
 import Logout from '../../containers/Auth/Logout/Logout'
 // import NewPost from './NewPost/NewPost';
 import { connect } from 'react-redux';
+import FullPost from './FullPost/FullPost';
 const AsyncNewPost = asyncComponent(() => {
     return import('./NewPost/NewPost');
 });
@@ -22,13 +23,13 @@ class Blog extends Component {
                     <nav>
                         <ul>
                             <li><NavLink
-                                to="/posts/"
+                                to="/"
                                 exact
                                 activeClassName="my-active"
                                 activeStyle={{
                                     color: '#fa923f',
                                     textDecoration: 'underline'
-                                }}>Posts</NavLink></li>
+                                }}>Home</NavLink></li>
                             <li><NavLink to={{
                                 pathname: '/new-post',
                                 hash: '#submit',
@@ -46,11 +47,13 @@ class Blog extends Component {
                 <Route path="/" render={() => <h1>Home 2</h1>} /> */}
                 <Switch>
                     <Route path="/new-post" component={AsyncNewPost} /> 
-                    <Route path="/posts" component={Posts} />
                     <Route path="/auth" component={Auth} />
                     <Route path="/logout" component={Logout} />
+                    <Route path="/posts/:id" exact component={FullPost} />
+                    <Route path={'/:id'} exact component={Posts} />
                     <Route path="/" component={Sections} />
                     <Route render={() => <h1>Not found</h1>}/>
+                    
                     {/* <Redirect from="/" to="/posts" /> */}
                     {/* <Route path="/" component={Posts} /> */}
                 </Switch>

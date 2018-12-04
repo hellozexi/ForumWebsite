@@ -4,13 +4,26 @@ import { Route } from 'react-router-dom';
 
 import Section from '../../../components/Section/Section';
 import classes from './Sections.css';
-import FullPost from '../FullPost/FullPost';
 import Posts from '../Posts/Posts'
 class Sections extends Component {
     state = {
-        sections : ['default', 'others']
+        sections : []
+    }
+    componentDidMount () {
+        axios.get( '/api/sections' )
+            .then( response => {
+                const sections = response.data;
+                console.log(sections);
+                // console.log( response );
+                this.setState({sections : sections})
+            } )
+            .catch( error => {
+                console.log( error );
+                // this.setState({error: true});
+            } );
     }
     sectionSelectedHandler = (id) => {
+        console.log(this.props);
         this.props.history.push( '/' + id );
     }
     render() {
@@ -19,7 +32,7 @@ class Sections extends Component {
                 <Section 
                     key= {section}
                     name = {section}
-                    admin = 'default'
+                    admin = 'admin'
                     clicked={() => this.sectionSelectedHandler(section)}
                 /> 
             )
@@ -29,7 +42,7 @@ class Sections extends Component {
                 <section className={classes.Sections}>
                     {sections}
                 </section>
-                <Route path={this.props.match.url + '/:id'} component={Posts} />
+               
             </div>
            
         )

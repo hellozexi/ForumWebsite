@@ -8,13 +8,20 @@ class NewPost extends Component {
     state = {
         title: '',
         content: '',
-        section: 'default',
+        sections: [],
+        section : 'default',
         submitted: false
     }
 
     componentDidMount () {
         // If unauth => this.props.history.replace('/posts');
         console.log( this.props );
+        axios.get('api/sections')
+            .then(response => {
+                console.log(response);
+                this.setState({sections : response.data});
+                console.log(this.state.sections);
+            })
     }
 
     postDataHandler = () => {
@@ -38,7 +45,7 @@ class NewPost extends Component {
         }, config)
             .then( response => {
                 console.log( response );
-                this.props.history.replace('/posts');
+                //this.props.history.replace('/posts');
                 this.setState( { submitted: true } );
             } );
     }
@@ -46,7 +53,7 @@ class NewPost extends Component {
     render () {
         let redirect = null;
         if (this.state.submitted) {
-            redirect = <Redirect to="/posts" />;
+            redirect = <Redirect to="/" />;
         }
         return (
             <div className={classes.NewPost}>
@@ -58,8 +65,13 @@ class NewPost extends Component {
                 <textarea rows="4" value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
                 <label>Section</label>
                 <select value={this.state.section} onChange={( event ) => this.setState( { section: event.target.value } )}>
-                    <option value="default">default</option>
-                    <option value="others">others</option>
+                    {
+                        this.state.sections.map(section => {
+                            return (
+                                <option value={section}>{section}</option>
+                            )
+                        })
+                    }
                 </select>
                 <button onClick={this.postDataHandler}>Add Post</button>
             </div>

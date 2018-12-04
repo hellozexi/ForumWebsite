@@ -10,30 +10,24 @@ class Posts extends Component {
     state = {
         posts: []
     }
-
     componentDidMount () {
-        console.log( this.props );
-        axios.get( '/posts' )
-            .then( response => {
-                const posts = response.data.slice( 0, 4 );
-                const updatedPosts = posts.map( post => {
-                    return {
-                        ...post,
-                        author: 'Max'
-                    }
-                } );
-                this.setState( { posts: updatedPosts } );
-                // console.log( response );
-            } )
-            .catch( error => {
-                console.log( error );
-                // this.setState({error: true});
-            } );
-    }
 
+        this.loadData();
+    }
+    loadData () {
+        console.log(this.props);
+        if ( this.props.match.params.id ) {
+            axios.get( '/api/posts?section_name=' + this.props.match.params.id )
+            .then( response => {
+                 console.log(response);
+                 this.setState({posts : response.data})
+            } );
+        }
+    }
     postSelectedHandler = ( id ) => {
         // this.props.history.push({pathname: '/posts/' + id});
-        this.props.history.push( '/posts/' + id );
+        console.log("path:::" + '/' + this.props.match.params.id + '/' + id)
+        this.props.history.push( '/posts/'  + id );
     }
 
     render () {
@@ -43,10 +37,10 @@ class Posts extends Component {
                 return (
                     // <Link to={'/posts/' + post.id} key={post.id}>
                     <Post
-                        key={post.id}
-                        title={post.title}
-                        author={post.author}
-                        clicked={() => this.postSelectedHandler( post.id )} />
+                        key={post.post_id}
+                        title={post.post_name}
+                        author={post.poster_email}
+                        clicked={() => this.postSelectedHandler( post.post_id )} />
                     // </Link>
                 );
             } );
@@ -57,8 +51,9 @@ class Posts extends Component {
                 <section className={classes.Posts}>
                     {posts}
                 </section>
-                <Route path={this.props.match.url + '/:id'} exact component={FullPost} />
+                <Route path="/posts/:id" exact component={FullPost} />
             </div>
+            
         );
     }
 }
