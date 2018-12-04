@@ -1,5 +1,6 @@
 from flask_testing import TestCase
 from datetime import datetime
+from urllib.parse import urlencode
 from forum import create_app
 from forum.database import db
 from forum.modules import User, Section
@@ -59,14 +60,14 @@ class TestGetComments(TestCase):
 
     def test_get_by_user(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/comments?user_id={self.user_id}')
+            response = client.get(f'/api/comments?{urlencode({"user_email": "xua@wustl.edu"})}')
             self.assertEqual(len(response.json), 3)
             contexts = [comment['context'] for comment in response.json]
             self.assertListEqual(contexts, ['this is great!', 'this is worse!', 'this is common!'])
 
     def test_get_by_post(self):
         with self.app.test_client() as client:
-            response = client.get(f'/api/comments?post_id={self.post_id}')
+            response = client.get(f'/api/comments?{urlencode({"post_id": self.post_id})}')
             self.assertEqual(len(response.json), 3)
             contexts = [comment['context'] for comment in response.json]
             self.assertListEqual(contexts, ['this is great!', 'this is worse!', 'this is common!'])

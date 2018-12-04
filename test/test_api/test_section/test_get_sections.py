@@ -38,7 +38,7 @@ class TestGetSections(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_create_section(self):
+    def test_get_sections(self):
         with self.app.test_client() as client:
             response = client.get('/api/sections')
 

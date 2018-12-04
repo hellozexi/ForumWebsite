@@ -55,3 +55,9 @@ class TestGetPost(TestCase):
             self.assertEqual(post['section_name'], 'sport')
             self.assertEqual(post['context'], "sport is great!")
             self.assertIsInstance(post['comments'], list)
+
+    def test_get_not_exist(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/post/{self.user_id}')
+            self.assertStatus(response, 404)
+            self.assertEqual(response.json, {'message': 'post not found'})
