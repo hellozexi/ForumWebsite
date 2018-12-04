@@ -1,4 +1,4 @@
-.Post {
+.Section {
     width: 250px;
     padding: 16px;
     text-align: center;
@@ -9,12 +9,12 @@
     cursor: pointer;
 }
 
-.Post:hover,
-.Post:active {
+.Section:hover,
+.Section:active {
     background-color: #C0DDF5;
 }
 
-.Author {
+.Admin {
     margin: 16px 0;
     color: #ccc;
 }

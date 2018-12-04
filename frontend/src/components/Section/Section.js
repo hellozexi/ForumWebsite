@@ -1,12 +1,12 @@
 import React from 'react';
 
-import classes from './section.css';
+import classes from './Section.css';
 
 const section = (props) => (
-    <article className={classes.Post} onClick={props.clicked}>
-        <h1>{props.title}</h1>
+    <article className={classes.Section} onClick={props.clicked}>
+        <h1>{props.name}</h1>
         <div className={classes.Info}>
-            <div className={classes.Author}>{props.author}</div>
+            <div className={classes.Admin}>{props.admin}</div>
         </div>
     </article>
 );
