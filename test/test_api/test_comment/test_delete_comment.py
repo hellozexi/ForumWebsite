@@ -53,7 +53,8 @@ class TestDeleteComment(TestCase):
     def test_delete_comment(self):
         self.assertEqual(Comment.query.count(), 1)
         with self.app.test_client() as client:
-            response = client.delete(f'/api/comment/{self.comment_id}')
+            response = client.delete(f'/api/comment/{self.comment_id}',
+                                     headers={'Authorization': "Token " + self.token})
             self.assertStatus(response, 200)
             self.assertEqual(response.json['comment_id'], self.comment_id)
 

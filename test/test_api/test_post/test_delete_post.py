@@ -41,10 +41,10 @@ class TestDeletePost(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_get_by_id(self):
+    def test_delete_post(self):
         self.assertEqual(Post.query.count(), 1)
         with self.app.test_client() as client:
-            response = client.delete(f'/api/post/{self.post_id}')
+            response = client.delete(f'/api/post/{self.post_id}', headers={'Authorization': "Token " + self.token})
             self.assertStatus(response, 200)
             self.assertEqual(response.json['post_id'], self.post_id)
 
