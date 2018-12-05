@@ -83,7 +83,11 @@ class FullPost extends Component {
                     <p>{this.state.loadedPost.context}</p>
                     <p>{this.state.loadedPost.post_time}</p>
                     <div className={classes.Edit}>
-                        <button className={classes.delete} onClick={()=>this.checkAuthorHandler(this.state.loadedPost.poster_email)}>{this.state.loadedPost.poster_email}</button>
+                        {
+                        this.props.token 
+                        ?<button className={classes.delete} onClick={()=>this.checkAuthorHandler(this.state.loadedPost.poster_email)}>{this.state.loadedPost.poster_email}</button>
+                        :<p>{this.state.loadedPost.poster_email}</p>
+                        }
                     </div>
                     <div className={classes.Edit}>
                         

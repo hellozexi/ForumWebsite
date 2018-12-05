@@ -11,6 +11,7 @@ import Logout from '../../containers/Auth/Logout/Logout'
 // import NewPost from './NewPost/NewPost';
 import { connect } from 'react-redux';
 import FullPost from './FullPost/FullPost';
+import EditPost from './EditPost/EditPost'
 import Profile from './Profile/Profile';
 import OtherProfile from './OtherProfile/OtherProfile'
 const AsyncNewPost = asyncComponent(() => {
@@ -57,6 +58,7 @@ class Blog extends Component {
                     <Route path="/logout" component={Logout} />
                     <Route path="/profile" component={Profile} />
                     <Route path="/users/:id" component={OtherProfile} />
+                    <Route path="/posts/edit/:id" exact component={EditPost} />
                     <Route path="/posts/:id" exact component={FullPost} />
                     <Route path={'/:id'} exact component={Posts} />
                     <Route path="/" component={Sections} />

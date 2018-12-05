@@ -213,6 +213,7 @@ class PostApi(Resource):
             ]
         }, 200
 
+    @auth.login_required
     def delete(self, post_id):
         """
         delete selected post
@@ -327,6 +328,7 @@ class CommentApi(Resource):
             'context': comment.context,
         }, 200
 
+    @auth.login_required
     def delete(self, comment_id):
         """
         delete selected post
