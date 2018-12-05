@@ -1,7 +1,8 @@
 from passlib.hash import sha256_crypt
+from datetime import datetime
+from sqlalchemy import PrimaryKeyConstraint
 from .database import db
 from .utils import new_uuid
-from datetime import datetime
 
 
 class User(db.Model):
@@ -26,6 +27,7 @@ class User(db.Model):
 class Section(db.Model):
     section_name = db.Column(db.String(100), primary_key=True)
     posts = db.relationship('Post', lazy=True, backref='section', cascade='all,delete')
+    blocks = db.relationship('BlockItem', backref='section', lazy=True, cascade='all,delete')
 
     @staticmethod
     def create(name: str):
@@ -33,6 +35,14 @@ class Section(db.Model):
 
     def __repr__(self):
         return f'{self.section_name}'
+
+
+class BlockItem(db.Model):
+    section_name = db.Column(db.String(100), db.ForeignKey('section.section_name'))
+    user_id = db.Column(db.String(32))
+    __table_args__ = (
+        PrimaryKeyConstraint('user_id', 'section_name', name='block'),
+    )
 
 
 class Post(db.Model):

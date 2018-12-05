@@ -6,7 +6,7 @@ from dateutil import parser
 from .utils import check_datetime
 from .config import config
 from .database import db
-from .modules import User, Section, Post, Comment
+from .modules import User, Section, Post, Comment, BlockItem
 
 
 auth = HTTPTokenAuth(scheme='Token')
@@ -99,6 +99,47 @@ class SectionApi(Resource):
         db.session.delete(section)
         db.session.commit()
         return {'section_name': section_name}, 200
+
+
+class BlocksApi(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('section_name', type=str, required=True, help='section name missing')
+        self.parser.add_argument('user_email', type=str, required=True, help='use user email to specify user')
+
+    def post(self):
+        args = self.parser.parse_args()
+        section = Section.query.filter_by(section_name=args['section_name']).first()
+        if section is None:
+            abort(400, 'section not exist')
+        user = User.query.filter_by(email=args['user_email']).first()
+        if user is None:
+            abort(400, 'user not exist')
+        block = BlockItem(user_id=user.user_id)
+        section.blocks.append(block)
+        db.session.commit()
+        return {'section_name': args['section_name'], 'email': args['user_email']}, 201
+
+
+class BlockApi(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser(bundle_errors=True)
+        self.parser.add_argument('user_email', type=str, required=True, help='use user email to specify user')
+
+    def delete(self, section_name):
+        args = self.parser.parse_args()
+        section = Section.query.filter_by(section_name=section_name).first()
+        if section is None:
+            abort(400, 'section not exist')
+        user = User.query.filter_by(email=args['user_email']).first()
+        if user is None:
+            abort(400, 'user not exist')
+        block = BlockItem.query.with_parent(section).filter_by(user_id=user.user_id).first()
+        if block is None:
+            abort(400, 'block not exist')
+        db.session.delete(block)
+        db.session.commit()
+        return {'section_name': section_name, 'email': args['user_email']}, 200
 
 
 class PostsApi(Resource):
