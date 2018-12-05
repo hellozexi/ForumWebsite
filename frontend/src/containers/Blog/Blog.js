@@ -14,6 +14,7 @@ import FullPost from './FullPost/FullPost';
 import EditPost from './EditPost/EditPost'
 import Profile from './Profile/Profile';
 import OtherProfile from './OtherProfile/OtherProfile'
+import EditComment from './EditComment/EditComment'
 const AsyncNewPost = asyncComponent(() => {
     return import('./NewPost/NewPost');
 });
@@ -58,6 +59,7 @@ class Blog extends Component {
                     <Route path="/logout" component={Logout} />
                     <Route path="/profile" component={Profile} />
                     <Route path="/users/:id" component={OtherProfile} />
+                    <Route path="/comments/edit/:id" component={EditComment} />
                     <Route path="/posts/edit/:id" exact component={EditPost} />
                     <Route path="/posts/:id" exact component={FullPost} />
                     <Route path={'/:id'} exact component={Posts} />

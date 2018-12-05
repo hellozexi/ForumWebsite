@@ -5,6 +5,7 @@ import { connect} from 'react-redux';
 import Post from '../../../components/Post/Post';
 import Comment from '../../../components/Comment/Comment'
 import classes from './Profile.css';
+import EditComment from '../../Blog/EditComment/EditComment'
 import FullPost from '../FullPost/FullPost';
 import EditPost from '../EditPost/EditPost'
 class Profile extends Component {
@@ -13,7 +14,9 @@ class Profile extends Component {
         comments: []
     }
     componentDidMount () {
-
+        this.loadData();
+    }
+    componentDidUpdate () {
         this.loadData();
     }
     loadData () {
@@ -43,16 +46,43 @@ class Profile extends Component {
     postDeleteHandler = (id) => {
         if(id) {
             //response = client.delete(f'/api/post/{self.post_id}')
-            axios.delete('/api/post/' + id)
+            let config = {
+                headers: {
+                    'Authorization': "Token " + this.props.token
+                }
+            }
+            axios.delete('/api/post/' + id, config)
                 .then(response => {
-                    console.log("profile:::")
-                    console.log(response);
+                    this.loadData();
                 })
         }
+        
     }
     postEditHandler = (id) => {
         if(id) {
             this.props.history.push('/posts/edit/' + id)
+            this.loadData();
+        }
+    }
+    commentDeleteHandler = (id) => {
+        if(id) {
+            //response = client.delete(f'/api/comment/{self.comment_id}')
+            let config = {
+                headers: {
+                    'Authorization': "Token " + this.props.token
+                }
+            }
+            axios.delete('/api/comment/' + id, config)
+                .then(response => {
+                    console.log("comment deleted:::")
+                    console.log(response);
+                    this.loadData();
+                })
+        }
+    }
+    commentEditHandler = (id) => {
+        if(id) {
+            this.props.history.push('/comments/edit/' + id)
         }
     }
     render () {
@@ -76,14 +106,16 @@ class Profile extends Component {
         if ( !this.state.error ) {
             comments = this.state.comments.map( comment => {
                 return (
-                    // <Link to={'/posts/' + post.id} key={post.id}>
-                    <Comment 
-                        key={comment.comment_id}
-                        title={comment.context}
-                        author={comment.author_email}
-                        time={comment.comment_time}
-                        clicked={() => this.commentSelectedHandler( comment.comment_id )}/> 
-                    // </Link>
+                    <div>
+                        <Comment 
+                            key={comment.comment_id}
+                            title={comment.context}
+                            author={comment.author_email}
+                            time={comment.comment_time}
+                            clicked={() => this.commentSelectedHandler( comment.comment_id )}/>
+                            <button onClick={()=> this.commentDeleteHandler(comment.comment_id)}>Delete</button> 
+                            <button onClick={()=> this.commentEditHandler(comment.comment_id)}>Edit</button> 
+                    </div>
                 );
             } );
         }
@@ -95,8 +127,7 @@ class Profile extends Component {
                     <p>Comments:</p>
                     {comments}
                 </section>
-                <Route path="/posts/edit/:id" exact component={EditPost} />
-                <Route path="/posts/:id" component={FullPost} />
+                
             </div>
             
         );
@@ -105,7 +136,8 @@ class Profile extends Component {
 
 const mapStateToProps = state => {
     return {
-        email : state.email
+        email : state.email,
+        token : state.token
     }
   }
   

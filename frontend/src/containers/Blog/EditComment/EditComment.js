@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {connect} from 'react-redux'
 import { Redirect } from 'react-router-dom';
-import classes from'./EditPost.css';
-class EditPost extends Component {
+import classes from'./EditComment.css';
+class EditComment extends Component {
     state = {
-        loadedPost: null,
+        loadedComment: null,
         create : false,
         content : '',
     }
@@ -13,13 +13,14 @@ class EditPost extends Component {
     componentDidMount () {
         this.loadData();
     }
+    
     loadData () {
         console.log(this.props)
         if ( this.props.match.params.id ) {
-            axios.get( '/api/post/' + this.props.match.params.id )
+            axios.get( '/api/comment/' + this.props.match.params.id )
                 .then( response => {
                     console.log(response);
-                    this.setState( { loadedPost: response.data } );
+                    this.setState( { loadedComment: response.data } );
                 } );
         }
        
@@ -36,7 +37,7 @@ class EditPost extends Component {
                 }
             }
             console.log("content:::" + this.state.content)
-            axios.put('/api/post/' + id, {
+            axios.put('/api/comment/' + id, {
                 'context' : this.state.content
             }, config)
                 .then(response => {
@@ -45,26 +46,25 @@ class EditPost extends Component {
                 })
         }
        
-        this.props.history.push("/profile");
+        this.props.history.goBack();
     }
     render () {
-        let post = <p style={{ textAlign: 'center' }}>Please select a Post!</p>;
+        let comment = <p style={{ textAlign: 'center' }}>Please select a comment!</p>;
         if ( this.props.match.params.id ) {
-            post = <p style={{ textAlign: 'center' }}>Loading...!</p>;
+            comment = <p style={{ textAlign: 'center' }}>Loading...!</p>;
         }
-        if ( this.state.loadedPost ) {
-            post = (
-                <div className={classes.EditPost}>
-                    <h1>{this.state.loadedPost.post_name}</h1>
+        if ( this.state.loadedComment ) {
+            comment = (
+                <div className={classes.EditComment}>
                     <div className={classes.Edit}>
-                        <textarea rows="4" placeholder={this.state.loadedPost.context} value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
-                        <button onClick={() => this.submitHandler(this.state.loadedPost.post_id)}>submit</button>
+                        <textarea rows="4" placeholder={this.state.loadedComment.context} value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
+                        <button onClick={() => this.submitHandler(this.state.loadedComment.comment_id)}>submit</button>
                     </div>
                 </div>
 
             );
         }
-        return post;
+        return comment;
     }
 }
 
@@ -74,4 +74,4 @@ const mapStateToProps = state => {
     }
   }
   
-export default connect(mapStateToProps)(EditPost);
+export default connect(mapStateToProps)(EditComment);

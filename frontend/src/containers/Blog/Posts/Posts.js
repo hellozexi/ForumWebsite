@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom';
 import Post from '../../../components/Post/Post';
 import classes from './Posts.css';
 import FullPost from '../FullPost/FullPost';
-
+import {connect} from 'react-redux'
 class Posts extends Component {
     state = {
         posts: []
@@ -29,18 +29,42 @@ class Posts extends Component {
         console.log("path:::" + '/' + this.props.match.params.id + '/' + id)
         this.props.history.push( '/posts/'  + id );
     }
+    postEditHandler = (id) => {
+        if(id) {
+            this.props.history.push('/posts/edit/' + id)
+        }
+    }
+    postDeleteHandler = (id) => {
+        if(id) {
+            //response = client.delete(f'/api/post/{self.post_id}')
+            let config = {
+                headers: {
+                    'Authorization': "Token " + this.props.token
+                }
+            }
+            axios.delete('/api/post/' + id, config)
+                .then(response => {
+                    console.log("profile:::")
+                    console.log(response);
+                    this.loadData();
+                })
+        }
+    }
     render () {
         let posts = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
         if ( !this.state.error ) {
             posts = this.state.posts.map( post => {
                 return (
                     // <Link to={'/posts/' + post.id} key={post.id}>
-                    <Post
-                        key={post.post_id}
-                        title={post.post_name}
-                        author={post.poster_email}
-                        clicked={() => this.postSelectedHandler( post.post_id )}/>
-                    // </Link>
+                    <div>
+                        <Post
+                            key={post.post_id}
+                            title={post.post_name}
+                            author={post.poster_email}
+                            clicked={() => this.postSelectedHandler( post.post_id )}/>
+                            {this.props.email === post.poster_email ? <button onClick={()=>this.postEditHandler(post.post_id)}>Edit</button> : null}
+                            {this.props.email === post.poster_email ? <button onClick={()=>this.postDeleteHandler(post.post_id)}>Delete</button> : null}
+                    </div>
                 );
             } );
         }
@@ -56,5 +80,11 @@ class Posts extends Component {
         );
     }
 }
-
-export default Posts;
+const mapStateToProps = state => {
+    return {
+        token : state.token,
+        email : state.email
+    }
+  }
+  
+export default connect(mapStateToProps)(Posts);

@@ -57,7 +57,7 @@ class FullPost extends Component {
                     console.log( response );
                     this.loadData()
                     //this.props.history.replace('/posts/' + this.props.match.params.id);
-                    this.setState( { submitted: true } );
+                    //this.setState( { submitted: true } );
                 } );
         }
     }
@@ -65,7 +65,29 @@ class FullPost extends Component {
         console.log('EMail:' + email);
         this.props.history.push('/users/' + encodeURI(email));
     }
+    commentDeleteHandler = (id) => {
+        if(id) {
+            //response = client.delete(f'/api/comment/{self.comment_id}')
+            let config = {
+                headers: {
+                    'Authorization': "Token " + this.props.token
+                }
+            }
+            axios.delete('/api/comment/' + id, config)
+                .then(response => {
+                    console.log("comment deleted:::")
+                    console.log(response);
+                    this.loadData();
+                })
+        }
+    }
+    commentEditHandler = (id) => {
+        if(id) {
+            this.props.history.push('/comments/edit/' + id)
+        }
+    }
     render () {
+        this.loadData();
         let redirect = null;
         if (this.state.submitted) {
             let url = '/posts/' + this.props.match.params.id
@@ -99,12 +121,23 @@ class FullPost extends Component {
                         {
                             this.state.comments.map(comment => {
                                 return (
-                                    <Comment 
-                                    key={comment.comment_id}
-                                    title={comment.context}
-                                    author={comment.author_email}
-                                    time={comment.comment_time}
-                                    clicked={() => this.commentSelectedHandler( comment.comment_id )}/>  
+                                    <div>
+                                        <Comment 
+                                        key={comment.comment_id}
+                                        title={comment.context}
+                                        author={comment.author_email}
+                                        time={comment.comment_time}
+                                        clicked={() => this.commentSelectedHandler( comment.comment_id )}/>
+                                        {
+                                            this.props.email === comment.author_email ? <button onClick={()=> this.commentDeleteHandler(comment.comment_id)}>Delete</button> : null
+                                            
+                                        }
+                                        {
+                                            this.props.email === comment.author_email ? <button onClick={()=> this.commentEditHandler(comment.comment_id)}>Edit</button> : null
+                                        }
+                                        
+                                          
+                                    </div>
                                 )
                         })}
                     </div>
@@ -119,7 +152,8 @@ class FullPost extends Component {
 
 const mapStateToProps = state => {
     return {
-        token : state.token
+        token : state.token,
+        email : state.email
     }
   }
   

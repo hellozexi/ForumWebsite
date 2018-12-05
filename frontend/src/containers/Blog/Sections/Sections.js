@@ -13,17 +13,13 @@ class Sections extends Component {
         axios.get( '/api/sections' )
             .then( response => {
                 const sections = response.data;
-                console.log(sections);
-                // console.log( response );
                 this.setState({sections : sections})
             } )
             .catch( error => {
-                console.log( error );
                 // this.setState({error: true});
             } );
     }
     sectionSelectedHandler = (id) => {
-        console.log(this.props);
         this.props.history.push( '/' + id );
     }
     render() {
