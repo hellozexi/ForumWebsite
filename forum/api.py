@@ -394,9 +394,9 @@ class CommentApi(Resource):
         :param comment_id:
         :return:
         """
-        comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
+        comment = Comment.query.filter_by(comment_id=comment_id).first()
         if comment is None:
-            abort(404, 'event not exist')
+            abort(404, 'comment not exist')
         if (comment.post.poster_email != g.user.email) and (comment.author_email != g.user.email) and (not g.user.admin):
             # the poster, commenter and the admin could delete comment
             abort(403, "you don't have permission to delete")
