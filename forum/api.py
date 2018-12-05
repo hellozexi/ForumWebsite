@@ -184,6 +184,7 @@ class PostApi(Resource):
             post.post_name = args['post_name']
         if args['context'] is not None:
             post.context = args['context']
+        db.session.commit()
         return {'post_id': post_id}, 200
 
     def get(self, post_id):
@@ -308,6 +309,7 @@ class CommentApi(Resource):
         if args['context'] is None:
             abort(400, 'argument missing')
         comment.context = args['context']
+        db.session.commit()
         return {'comment_id': comment_id}, 200
 
     def get(self, comment_id):
