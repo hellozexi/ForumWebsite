@@ -268,6 +268,7 @@ class PostApi(Resource):
             ]
         }, 200
 
+    @auth.login_required
     def delete(self, post_id):
         """
         delete selected post
@@ -277,7 +278,7 @@ class PostApi(Resource):
         post = Post.query.filter_by(post_id=post_id).first()
         if post is None:
             abort(404, 'event not exist')
-        if post.poster_email != g.user.email and not g.user.admin:
+        if (post.poster_email != g.user.email) and (not g.user.admin):
             # the poster and the admin could delete post
             abort(403, "you don't have permission to delete")
         db.session.delete(post)
@@ -334,7 +335,7 @@ class CommentsApi(Resource):
         args = self.parser.parse_args()
         post = Post.query.filter_by(post_id=args['post_id']).first()
         if post is None:
-            abort(404, 'post not exist')
+            abort(400, 'post not exist')
         if not check_datetime(args['comment_time']):
             abort(400, 'comment_time not valid')
         block = BlockItem.query.with_parent(post.section).filter_by(user_id=g.user.user_id).first()
@@ -386,16 +387,17 @@ class CommentApi(Resource):
             'context': comment.context,
         }, 200
 
+    @auth.login_required
     def delete(self, comment_id):
         """
         delete selected post
         :param comment_id:
         :return:
         """
-        comment = Comment.query.with_parent(g.user).filter_by(comment_id=comment_id).first()
+        comment = Comment.query.filter_by(comment_id=comment_id).first()
         if comment is None:
-            abort(404, 'event not exist')
-        if comment.post.poster_email != g.user.email and comment.author_email != g.user.email and not g.user.admin:
+            abort(404, 'comment not exist')
+        if (comment.post.poster_email != g.user.email) and (comment.author_email != g.user.email) and (not g.user.admin):
             # the poster, commenter and the admin could delete comment
             abort(403, "you don't have permission to delete")
         db.session.delete(comment)
