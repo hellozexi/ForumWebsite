@@ -60,3 +60,9 @@ class TestGetComment(TestCase):
             self.assertEqual(comment['comment_time'], str(self.time))
             self.assertEqual(comment['author_email'], 'xua@wustl.edu')
             self.assertEqual(comment['context'], 'this is great!')
+
+    def test_get_not_exist(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/comment/{self.user_id}')
+            self.assertStatus(response, 404)
+            self.assertEqual(response.json, {'message': 'post not found'})

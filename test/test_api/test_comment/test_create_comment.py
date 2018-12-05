@@ -2,7 +2,7 @@ from flask_testing import TestCase
 from datetime import datetime
 from forum import create_app
 from forum.database import db
-from forum.modules import User, Post, Section, Comment
+from forum.modules import User, Section
 
 
 class TestCreateComment(TestCase):
@@ -49,3 +49,57 @@ class TestCreateComment(TestCase):
             }, headers={'Authorization': "Token " + self.token})
             self.assertStatus(response, 201)
             self.assertIsNotNone(response.json['comment_id'])
+
+    def test_create_missing_time(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'post_id': self.post_id,
+                'context': 'this is great!',
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+
+    def test_create_wrong_post_time(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'post_id': self.post_id,
+                'comment_time': 'wrong time',
+                'context': 'this is great!',
+            }, headers={'Authorization': "Token " + self.token})
+
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'comment_time not valid'})
+
+    def test_create_missing_post_id(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'comment_time': datetime(2018, 7, 10, 12, 55, 0),
+                'context': 'this is great!',
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+
+    def test_create_post_not_exist(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'post_id': 'not exist',
+                'comment_time': datetime(2018, 7, 10, 12, 55, 0),
+                'context': 'this is great!',
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'post not exist'})
+
+    def test_create_missing_context(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'post_id': self.post_id,
+                'comment_time': datetime(2018, 7, 10, 12, 55, 0),
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+
+    def test_create_missing_token(self):
+        with self.app.test_client() as client:
+            response = client.post('/api/comments', json={
+                'post_id': self.post_id,
+                'comment_time': datetime(2018, 7, 10, 12, 55, 0),
+                'context': 'this is great!',
+            })
+            self.assertStatus(response, 401)
