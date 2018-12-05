@@ -45,7 +45,7 @@ class EditPost extends Component {
                 })
         }
        
-        this.props.history.push("/profile");
+        this.props.history.push("/posts/" + this.props.match.params.id);
     }
     render () {
         let post = <p style={{ textAlign: 'center' }}>Please select a Post!</p>;

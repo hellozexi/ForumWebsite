@@ -21,6 +21,7 @@ class FullPost extends Component {
         if ( this.props.match.params.id ) {
             axios.get( '/api/post/' + this.props.match.params.id )
                 .then( response => {
+                    console.log("FullPost:::::::")
                     console.log(response);
                     this.setState( { loadedPost: response.data } );
                 } );
@@ -86,8 +87,22 @@ class FullPost extends Component {
             this.props.history.push('/comments/edit/' + id)
         }
     }
+    mute =(user, section) => {
+        /*response = client.post('/api/blocks', json={
+            'section_name': 'sport',
+            'user_email': 'xua'
+        }, headers={'Authorization': "Token " + token})*/
+        let config = {
+            headers: {
+                'Authorization': "Token " + this.props.token
+            }
+        }
+        axios.post('/api/blocks',{
+            'section_name' : section,
+            'user_email' : user
+        }, config)
+    }
     render () {
-        this.loadData();
         let redirect = null;
         if (this.state.submitted) {
             let url = '/posts/' + this.props.match.params.id
@@ -109,6 +124,12 @@ class FullPost extends Component {
                         this.props.token 
                         ?<button className={classes.delete} onClick={()=>this.checkAuthorHandler(this.state.loadedPost.poster_email)}>{this.state.loadedPost.poster_email}</button>
                         :<p>{this.state.loadedPost.poster_email}</p>
+                        }
+
+                        {
+                            this.props.email==='admin'
+                            ? <button onClick={()=>this.mute(this.state.loadedPost.poster_email, this.state.loadedPost.section_name)}>Mute</button>
+                            : null
                         }
                     </div>
                     <div className={classes.Edit}>

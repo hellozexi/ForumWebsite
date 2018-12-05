@@ -16,9 +16,6 @@ class Profile extends Component {
     componentDidMount () {
         this.loadData();
     }
-    componentDidUpdate () {
-        this.loadData();
-    }
     loadData () {
         if ( this.props.email ) {
             

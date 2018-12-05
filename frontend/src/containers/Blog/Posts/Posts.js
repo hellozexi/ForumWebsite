@@ -8,7 +8,8 @@ import FullPost from '../FullPost/FullPost';
 import {connect} from 'react-redux'
 class Posts extends Component {
     state = {
-        posts: []
+        posts: [],
+        blockedUsers: []
     }
     componentDidMount () {
 
@@ -50,6 +51,45 @@ class Posts extends Component {
                 })
         }
     }
+    mute =(user, section) => {
+        /*response = client.post('/api/blocks', json={
+            'section_name': 'sport',
+            'user_email': 'xua'
+        }, headers={'Authorization': "Token " + token})*/
+        let config = {
+            headers: {
+                'Authorization': "Token " + this.props.token
+            }
+        }
+        axios.post('/api/blocks',{
+            'section_name' : section,
+            'user_email' : user
+        }, config)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+                alert(err);
+            })
+    }
+    unMute = (user, section) => {
+        let config = {
+            headers: {
+                'Authorization': "Token " + this.props.token
+            }
+        }
+        /*response = client.delete(f'/api/block/sport?{urlencode({"user_email": "xua"})}',
+        headers={'Authorization': "Token " + self.token})*/
+        axios.delete('/api/block/' + section + "?" +  encodeURI("user_email=" + encodeURI(user)), config)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+                alert(err);
+            })
+    }
     render () {
         let posts = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
         if ( !this.state.error ) {
@@ -64,6 +104,16 @@ class Posts extends Component {
                             clicked={() => this.postSelectedHandler( post.post_id )}/>
                             {this.props.email === post.poster_email ? <button onClick={()=>this.postEditHandler(post.post_id)}>Edit</button> : null}
                             {this.props.email === post.poster_email ? <button onClick={()=>this.postDeleteHandler(post.post_id)}>Delete</button> : null}
+                            {
+                                this.props.email==='admin'
+                                ? <button onClick={()=>this.mute(post.poster_email, post.section_name)}>Mute</button>
+                                : null
+                            }
+                             {
+                                this.props.email==='admin'
+                                ? <button onClick={()=>this.unMute(post.poster_email, post.section_name)}>unMute</button>
+                                : null
+                            }
                     </div>
                 );
             } );

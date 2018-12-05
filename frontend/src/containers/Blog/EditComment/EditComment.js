@@ -46,7 +46,7 @@ class EditComment extends Component {
                 })
         }
        
-        this.props.history.goBack();
+        this.props.history.push("/");
     }
     render () {
         let comment = <p style={{ textAlign: 'center' }}>Please select a comment!</p>;

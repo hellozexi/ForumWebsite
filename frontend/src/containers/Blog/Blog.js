@@ -13,8 +13,9 @@ import { connect } from 'react-redux';
 import FullPost from './FullPost/FullPost';
 import EditPost from './EditPost/EditPost'
 import Profile from './Profile/Profile';
-import OtherProfile from './OtherProfile/OtherProfile'
-import EditComment from './EditComment/EditComment'
+import OtherProfile from './OtherProfile/OtherProfile';
+import EditComment from './EditComment/EditComment';
+import NewSection from './NewSection/NewSection';
 const AsyncNewPost = asyncComponent(() => {
     return import('./NewPost/NewPost');
 });
@@ -41,13 +42,18 @@ class Blog extends Component {
                             {
                                 this.props.isAuthenticated ? <NavLink to="/new-post">New Post</NavLink> : null
                             }
-                                
-                                </li>
+                            </li>
+                            <li>
+                                {
+                                    this.props.isAdmin ? <NavLink to="/new-section">New Section</NavLink> : null
+                                }
+                            </li>
                             <li> 
                                 {
                                     this.props.isAuthenticated ? <NavLink to="/logout">Log out</NavLink> : <NavLink to="/auth">Sign up/Sign in</NavLink>
                                 }
                             </li>
+                            
                         </ul>
                     </nav>
                 </header>
@@ -55,6 +61,7 @@ class Blog extends Component {
                 <Route path="/" render={() => <h1>Home 2</h1>} /> */}
                 <Switch>
                     <Route path="/new-post" component={AsyncNewPost} /> 
+                    <Route path="/new-section" component={NewSection} />
                     <Route path="/auth" component={Auth} />
                     <Route path="/logout" component={Logout} />
                     <Route path="/profile" component={Profile} />

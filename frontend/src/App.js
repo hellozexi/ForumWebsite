@@ -9,7 +9,7 @@ class App extends Component {
       // <BrowserRouter basename="/my-app">
       <BrowserRouter>
         <div className="App">
-          <Blog isAuthenticated={this.props.isAuthenticated} />
+          <Blog isAuthenticated={this.props.isAuthenticated} isAdmin={this.props.isAdmin}/>
         </div>
       </BrowserRouter>
     );
@@ -17,7 +17,8 @@ class App extends Component {
 }
 const mapStateToProps = state => {
   return {
-      isAuthenticated : state.token !== null
+      isAuthenticated : state.token !== null,
+      isAdmin : state.email === 'admin'
   }
 }
 
