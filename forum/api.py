@@ -63,7 +63,8 @@ class TokensApi(Resource):
             abort(404, 'user not exist')
         if not user.verify(password):
             abort(400, 'wrong password')
-        return {'token': signer.sign(user.user_id).decode()}, 201
+        is_admin = user.admin
+        return {'token': signer.sign(user.user_id).decode(), 'admin:': is_admin}, 201
 
 
 class SectionsApi(Resource):
@@ -107,7 +108,10 @@ class BlocksApi(Resource):
         self.parser.add_argument('section_name', type=str, required=True, help='section name missing')
         self.parser.add_argument('user_email', type=str, required=True, help='use user email to specify user')
 
+    @auth.login_required
     def post(self):
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
         args = self.parser.parse_args()
         section = Section.query.filter_by(section_name=args['section_name']).first()
         if section is None:
@@ -115,6 +119,9 @@ class BlocksApi(Resource):
         user = User.query.filter_by(email=args['user_email']).first()
         if user is None:
             abort(400, 'user not exist')
+        block = BlockItem.query.with_parent(section).filter_by(user_id=user.user_id).first()
+        if block is not None:
+            abort(400, 'block already exist')
         block = BlockItem(user_id=user.user_id)
         section.blocks.append(block)
         db.session.commit()
@@ -126,7 +133,10 @@ class BlockApi(Resource):
         self.parser = reqparse.RequestParser(bundle_errors=True)
         self.parser.add_argument('user_email', type=str, required=True, help='use user email to specify user')
 
+    @auth.login_required
     def delete(self, section_name):
+        if not g.user.admin:
+            abort(403, 'user is not admin!')
         args = self.parser.parse_args()
         section = Section.query.filter_by(section_name=section_name).first()
         if section is None:
@@ -195,6 +205,9 @@ class PostsApi(Resource):
             abort(400, 'section not exist')
         if not check_datetime(args['post_time']):
             abort(400, 'post_time not valid')
+        block = BlockItem.query.with_parent(section).filter_by(user_id=g.user.user_id).first()
+        if block is not None:
+            abort(403, 'user is blocked from this section!')
         with db.session.no_autoflush:
             post = Post.create(args['post_name'], parser.parse(args['post_time']), args['context'])
             post_id = post.post_id
@@ -323,6 +336,9 @@ class CommentsApi(Resource):
             abort(404, 'post not exist')
         if not check_datetime(args['comment_time']):
             abort(400, 'comment_time not valid')
+        block = BlockItem.query.with_parent(post.section).filter_by(user_id=g.user.user_id).first()
+        if block is not None:
+            abort(403, 'user is blocked from this section!')
         with db.session.no_autoflush:
             comment = Comment.create(parser.parse(args['comment_time']), args['context'])
             comment_id = comment.comment_id

@@ -30,6 +30,23 @@ class TestBlock(TestCase):
         db.session.commit()
         self.assertEqual(len(BlockItem.query.all()), 1)
 
+    def test_create_after_commit(self):
+        self.assertEqual(len(BlockItem.query.all()), 0)
+        user = User.create('admin', 'admin', admin=True)
+        xua = User.create('xua', 'passwd')
+        section = Section.create('sports')
+        db.session.add(section)
+        db.session.add(user)
+        db.session.add(xua)
+        db.session.commit()
+
+        section = Section.query.filter_by(section_name='sports').first()
+        user = User.query.filter_by(email='xua').first()
+        block = BlockItem(user_id=user.user_id)
+        section.blocks.append(block)
+        db.session.commit()
+        self.assertEqual(len(BlockItem.query.all()), 1)
+
     def test_search(self):
         user = User.create('xua@wustl.edu', 'password')
         user_id = user.user_id
