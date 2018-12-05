@@ -60,3 +60,26 @@ class TestModifyComment(TestCase):
             response = client.get(f'/api/comment/{self.comment_id}')
             self.assertStatus(response, 200)
             self.assertEqual(response.json['context'], 'this is worse!')
+
+    def test_modify_none(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/comment/{self.comment_id}', json={
+
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'argument missing'})
+
+    def test_modify_with_other_argument(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/comment/{self.comment_id}', json={
+                'else': 'something else'
+            }, headers={'Authorization': "Token " + self.token})
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'argument missing'})
+
+    def test_modify_without_token(self):
+        with self.app.test_client() as client:
+            response = client.put(f'/api/comment/{self.comment_id}', json={
+                'context': 'this is worse!'
+            })
+            self.assertStatus(response, 401)

@@ -71,3 +71,21 @@ class TestGetComments(TestCase):
             self.assertEqual(len(response.json), 3)
             contexts = [comment['context'] for comment in response.json]
             self.assertListEqual(contexts, ['this is great!', 'this is worse!', 'this is common!'])
+
+    def test_get_without_argument(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/comments')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_get_with_other_argument(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/comments?{urlencode({"other": "else"})}')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'arguments missing'})
+
+    def test_too_many_argumernts(self):
+        with self.app.test_client() as client:
+            response = client.get(f'/api/comments?{urlencode({"user_email": "xua@wustl.edu", "post_id": self.post_id})}')
+            self.assertStatus(response, 400)
+            self.assertEqual(response.json, {'message': 'too many arguments'})
