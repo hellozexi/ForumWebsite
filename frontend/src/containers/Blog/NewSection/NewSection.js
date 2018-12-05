@@ -38,7 +38,10 @@ class NewSection extends Component {
                 console.log( response );
                 //this.props.history.replace('/posts');
                 this.setState( { submitted: true } );
-            } );
+            } )
+            .catch(err => {
+                alert(err.response.data.message)
+            })
     }
 
     render () {

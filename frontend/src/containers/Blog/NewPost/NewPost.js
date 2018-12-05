@@ -22,6 +22,9 @@ class NewPost extends Component {
                 this.setState({sections : response.data});
                 console.log(this.state.sections);
             })
+            .catch(err => {
+                alert(err.response.data.message)
+            })
     }
 
     postDataHandler = () => {
@@ -47,7 +50,10 @@ class NewPost extends Component {
                 console.log( response );
                 //this.props.history.replace('/posts');
                 this.setState( { submitted: true } );
-            } );
+            } )
+            .catch(err => {
+                alert(err.response.data.message)
+            })
     }
 
     render () {

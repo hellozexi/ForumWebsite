@@ -1,20 +1,15 @@
 .Comment {
-    width: 250px;
+    width: 500px;
+    height: 70px;
     padding: 16px;
-    text-align: center;
-    border: 1px solid #eee;
+    text-align: left;
+    font-family: 'Courier New', Courier, monospace;
+    border-bottom: 1px solid #eee;
     box-shadow: 0 2px 3px #ccc;
-    margin: 10px;
-    box-sizing: border-box;
-    cursor: pointer;
+    margin: auto;
 }
-
-.Comment:hover,
-.Comment:active {
-    background-color: #C0DDF5;
-}
-
 .Author {
-    margin: 16px 0;
+    margin: 5px 0;
+    text-align: right;
     color: #ccc;
 }

@@ -37,6 +37,9 @@ class Sections extends Component {
                 console.log(response);
                 this.loadData();
             })
+            .catch(err => {
+                alert(err.response.data.message)
+            })
         
     }
     render() {

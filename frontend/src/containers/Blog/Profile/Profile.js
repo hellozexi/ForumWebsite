@@ -18,13 +18,15 @@ class Profile extends Component {
     }
     loadData () {
         if ( this.props.email ) {
-            
-            //response = client.get(f'/api/posts?{urlencode(   }')
+            console.log("posts:::::")
             axios.get( '/api/posts?' + encodeURI("user_email="+encodeURI(this.props.email)) )
             .then( response => {
-                 
+                 console.log(response);
                  this.setState({posts : response.data})
-            } );
+            } )
+            .catch(err => {
+                alert(err.response.data.message)
+            })
         }
         if ( this.props.email ) {
             //response = client.get(f'/api/comments?{urlencode({"user_email": "xua@wustl.edu"})}')
@@ -32,7 +34,10 @@ class Profile extends Component {
                 .then( response => {
                    
                     this.setState( { comments: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     postSelectedHandler = ( id ) => {
@@ -51,6 +56,9 @@ class Profile extends Component {
             axios.delete('/api/post/' + id, config)
                 .then(response => {
                     this.loadData();
+                })
+                .catch(err => {
+                    alert(err.response.data.message)
                 })
         }
         
@@ -75,6 +83,9 @@ class Profile extends Component {
                     console.log(response);
                     this.loadData();
                 })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     commentEditHandler = (id) => {
@@ -92,9 +103,13 @@ class Profile extends Component {
                             key={post.post_id}
                             title={post.post_name}
                             author={post.poster_email}
+                            //content = {post.post_content}
                             clicked={() => this.postSelectedHandler( post.post_id )} />
-                        <button onClick={()=> this.postDeleteHandler(post.post_id)}>Delete</button> 
-                        <button onClick={()=> this.postEditHandler(post.post_id)}>Edit</button>
+                            <div className={classes.Edit}>
+                                <button onClick={()=> this.postDeleteHandler(post.post_id)}>Delete</button> 
+                                <button onClick={()=> this.postEditHandler(post.post_id)}>Edit</button>
+                            </div>
+                       
                     </div>
                 );
             } );
@@ -103,27 +118,30 @@ class Profile extends Component {
         if ( !this.state.error ) {
             comments = this.state.comments.map( comment => {
                 return (
-                    <div>
+                    <div className={classes.Comments}>
                         <Comment 
                             key={comment.comment_id}
                             title={comment.context}
                             author={comment.author_email}
                             time={comment.comment_time}
                             clicked={() => this.commentSelectedHandler( comment.comment_id )}/>
-                            <button onClick={()=> this.commentDeleteHandler(comment.comment_id)}>Delete</button> 
-                            <button onClick={()=> this.commentEditHandler(comment.comment_id)}>Edit</button> 
+                            <div className={classes.Edit}>
+                                <button onClick={()=> this.commentDeleteHandler(comment.comment_id)}>Delete</button> 
+                                <button onClick={()=> this.commentEditHandler(comment.comment_id)}>Edit</button> 
+                            </div>
+                            
                     </div>
                 );
             } );
         }
         return (
-            <div>
-                <section className={classes.Profile}>
+            <div className={classes.Profile}>
+                <section className={classes.Posts}>
                     {posts}
-                    <hr />
-                    <p>Comments:</p>
-                    {comments}
                 </section>
+                <h1>Comments:</h1>
+                {comments}
+               
                 
             </div>
             

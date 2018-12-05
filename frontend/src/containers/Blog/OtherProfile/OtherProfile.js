@@ -24,7 +24,10 @@ class OtherProfile extends Component {
             .then( response => {
                  console.log(response);
                  this.setState({posts : response.data})
-            } );
+            } )
+            .catch(err => {
+                alert(err.response.data.message)
+            })
         }
         if ( this.props.match.params.id ) {
             //response = client.get(f'/api/comments?{urlencode({"user_email": "xua@wustl.edu"})}')
@@ -32,7 +35,10 @@ class OtherProfile extends Component {
                 .then( response => {
                     console.log(response);
                     this.setState( { comments: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     postSelectedHandler = ( id ) => {
@@ -72,13 +78,14 @@ class OtherProfile extends Component {
             } );
         }
         return (
-            <div>
-                <section className={classes.OtherProfile}>
+            <div className={classes.OtherProfile}>
+                <h1>Welcome to {this.props.match.params.id}'s home</h1>
+                <section className={classes.Posts}>
                     {posts}
-                    <hr />
-                    <p>Comments:</p>
-                    {comments}
                 </section>
+                <h1>Comments:</h1>
+                {comments}
+                
                 <Route path="/posts/:id" exact component={FullPost} />
             </div>
             

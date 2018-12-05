@@ -139,7 +139,7 @@ class Auth extends Component {
                     {form}
                     <Button btnType="Success">SUBMIT</Button>
                 </form>
-                <Button clicked={this.switchModeHandler} btnType="Danger">Sign {this.state.isSignUp ? 'in' : 'out'}</Button>
+                <Button clicked={this.switchModeHandler} btnType="Danger">Sign {this.state.isSignUp ? 'in' : 'up'}</Button>
             </div>
         );
     }
@@ -147,7 +147,7 @@ class Auth extends Component {
 const mapStateToProps = state => {
     return {
         error: state.error,
-        isAuth: state.token !== null
+        isAuth: state.token !== null && state.token !== undefined
     }
 }
 const mapDispatchToProps = dispatch => {

@@ -20,7 +20,10 @@ class EditPost extends Component {
                 .then( response => {
                     console.log(response);
                     this.setState( { loadedPost: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
        
     }
@@ -43,9 +46,15 @@ class EditPost extends Component {
                     console.log("result:::")
                     console.log(response);
                 })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
        
-        this.props.history.push("/posts/" + this.props.match.params.id);
+        this.props.history.push("/posts/" + id);
+    }
+    rollBack = () => {
+        this.props.history.goBack();
     }
     render () {
         let post = <p style={{ textAlign: 'center' }}>Please select a Post!</p>;
@@ -59,6 +68,7 @@ class EditPost extends Component {
                     <div className={classes.Edit}>
                         <textarea rows="4" placeholder={this.state.loadedPost.context} value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
                         <button onClick={() => this.submitHandler(this.state.loadedPost.post_id)}>submit</button>
+                        <button onClick={() => this.rollBack()}>Back</button>
                     </div>
                 </div>
 

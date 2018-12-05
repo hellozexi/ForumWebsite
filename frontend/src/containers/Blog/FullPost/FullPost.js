@@ -24,14 +24,20 @@ class FullPost extends Component {
                     console.log("FullPost:::::::")
                     console.log(response);
                     this.setState( { loadedPost: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
         if ( this.props.match.params.id ) {
             axios.get( '/api/comments?post_id=' + this.props.match.params.id )
                 .then( response => {
                     console.log(response);
                     this.setState( { comments: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
        
     }
@@ -59,7 +65,10 @@ class FullPost extends Component {
                     this.loadData()
                     //this.props.history.replace('/posts/' + this.props.match.params.id);
                     //this.setState( { submitted: true } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     checkAuthorHandler = (email) => {
@@ -80,6 +89,9 @@ class FullPost extends Component {
                     console.log(response);
                     this.loadData();
                 })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     commentEditHandler = (id) => {
@@ -87,20 +99,8 @@ class FullPost extends Component {
             this.props.history.push('/comments/edit/' + id)
         }
     }
-    mute =(user, section) => {
-        /*response = client.post('/api/blocks', json={
-            'section_name': 'sport',
-            'user_email': 'xua'
-        }, headers={'Authorization': "Token " + token})*/
-        let config = {
-            headers: {
-                'Authorization': "Token " + this.props.token
-            }
-        }
-        axios.post('/api/blocks',{
-            'section_name' : section,
-            'user_email' : user
-        }, config)
+    rollBack = () => {
+        this.props.history.goBack();
     }
     render () {
         let redirect = null;
@@ -125,25 +125,22 @@ class FullPost extends Component {
                         ?<button className={classes.delete} onClick={()=>this.checkAuthorHandler(this.state.loadedPost.poster_email)}>{this.state.loadedPost.poster_email}</button>
                         :<p>{this.state.loadedPost.poster_email}</p>
                         }
-
-                        {
-                            this.props.email==='admin'
-                            ? <button onClick={()=>this.mute(this.state.loadedPost.poster_email, this.state.loadedPost.section_name)}>Mute</button>
-                            : null
-                        }
                     </div>
                     <div className={classes.Edit}>
                         
                         {this.state.create ? <textarea rows="4" value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} /> : null}
                         {this.state.create ? <button onClick={this.submitHandler}>submit</button> : null}
                         <button onClick={this.createHandler} className={classes.delete}>{this.state.create ? 'cancel' : 'comment'}</button>
+                        <button onClick={this.rollBack} >Back</button>
                     </div>
+                    <h3>Comments</h3>
                     <div className={classes.Comments}>
                         {
                             this.state.comments.map(comment => {
                                 return (
                                     <div>
-                                        <Comment 
+                                        
+                                        <Comment
                                         key={comment.comment_id}
                                         title={comment.context}
                                         author={comment.author_email}

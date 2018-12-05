@@ -22,7 +22,10 @@ class Posts extends Component {
             .then( response => {
                  console.log(response);
                  this.setState({posts : response.data})
-            } );
+            } )
+            .catch(err => {
+                alert(err.response.data.message)
+            })
         }
     }
     postSelectedHandler = ( id ) => {
@@ -49,6 +52,9 @@ class Posts extends Component {
                     console.log(response);
                     this.loadData();
                 })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
     }
     mute =(user, section) => {
@@ -69,8 +75,7 @@ class Posts extends Component {
                 console.log(response);
             })
             .catch(err => {
-                console.log(err);
-                alert(err);
+                alert(err.response.data.message)
             })
     }
     unMute = (user, section) => {
@@ -86,8 +91,7 @@ class Posts extends Component {
                 console.log(response);
             })
             .catch(err => {
-                console.log(err);
-                alert(err);
+                alert(err.response.data.message)
             })
     }
     render () {

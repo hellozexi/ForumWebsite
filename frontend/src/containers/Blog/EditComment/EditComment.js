@@ -21,7 +21,10 @@ class EditComment extends Component {
                 .then( response => {
                     console.log(response);
                     this.setState( { loadedComment: response.data } );
-                } );
+                } )
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
        
     }
@@ -44,9 +47,15 @@ class EditComment extends Component {
                     console.log("result:::")
                     console.log(response);
                 })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
         }
        
         this.props.history.push("/");
+    }
+    rollBack = () => {
+        this.props.history.goBack();
     }
     render () {
         let comment = <p style={{ textAlign: 'center' }}>Please select a comment!</p>;
@@ -59,6 +68,7 @@ class EditComment extends Component {
                     <div className={classes.Edit}>
                         <textarea rows="4" placeholder={this.state.loadedComment.context} value={this.state.content} onChange={( event ) => this.setState( { content: event.target.value } )} />
                         <button onClick={() => this.submitHandler(this.state.loadedComment.comment_id)}>submit</button>
+                        <button onClick={() => this.rollBack()}>Back</button>
                     </div>
                 </div>
 
